@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin # type: ignore
 from django.urls import path # type: ignore
-from basic.views import home,about,navbar,contact
+from basic.views import home,about,navbar,contact,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity
 
 
 urlpatterns = [
@@ -24,6 +24,12 @@ urlpatterns = [
     path('home/',home,name='home'),
     path('about/',about,name='about'),
     path('contact/',contact,name='contact'),
-    path('navbar/',navbar,name='navbar')
-
+    path('navbar/',navbar,name='navbar'),
+    path('sample/',sample),
+    path('sample1/',sample1),
+    path('sample2/',sample2),
+    path('sample3/',sample3),
+    path('product/',product),
+    path('filter/',filteringData),
+    path('students/',filterStudentsByCity)
 ]

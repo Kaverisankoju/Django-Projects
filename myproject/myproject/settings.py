@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-_24b*4ip5n!d)3hd3p44t6p#1_7rb@c1#2%gzhbby)mp6wqi@o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["django-projects-ulps.onrender.com"]
+ALLOWED_HOSTS = ["django-projects-ulps.onrender.com","127.0.0.1"]
 
 
 # Application definition
@@ -66,6 +66,7 @@ TEMPLATES = [
         },
     },
 ]
+ASGI_APPLICATION = 'myproject.asgi.application'
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
@@ -75,14 +76,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': '56r',
         'USER':'root',
         'PASSWORD':'Kaveri@123',
         'HOST':'127.0.0.1',
         'PORT':'3306',
-        'OPTIONS':{'charset':'utf8mb4',
-        'init_command':'SET sql_mode=STRICT_TRANS_TABLES'
+        'OPTIONS':{
+            "autocommit":True,
         }
         
     }
