@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin # type: ignore
 from django.urls import path # type: ignore
-from basic.views import home,about,navbar,contact,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity
+from basic.views import home,about,navbar,contact,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity,pagination,createData,createProduct,createEmployee,createProductDetails,carPrices,orderPlacing
+from basic.views import movieTickets
 
 
 urlpatterns = [
@@ -31,5 +32,13 @@ urlpatterns = [
     path('sample3/',sample3),
     path('product/',product),
     path('filter/',filteringData),
-    path('students/',filterStudentsByCity)
+    path('students/',filterStudentsByCity),
+    path('pagination/',pagination),
+    path('create/',createData),
+    path('createproduct/',createProduct),
+    path('empdetails/',createEmployee),
+    path('productdetails/',createProductDetails),
+    path('prices/',carPrices),
+    path('order/',orderPlacing),
+    path('ticket/',movieTickets)
 ]

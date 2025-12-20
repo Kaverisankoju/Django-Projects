@@ -66,7 +66,6 @@ TEMPLATES = [
         },
     },
 ]
-ASGI_APPLICATION = 'myproject.asgi.application'
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
@@ -76,18 +75,20 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': '56r',
         'USER':'root',
-        'PASSWORD':'Kaveri@123',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'PASSWORD':"Kaveri@123",
+        'Host': '127.0.0.1',
+        'PORT': '3306',
         'OPTIONS':{
-            "autocommit":True,
+            # 'autocommit':True
+            "charset":"utf8mb4",
+            "init_command":"SET sql_mode='STRICT_TRANS_TABLES'"
         }
-        
     }
 }
+
 
 
 # Password validation
@@ -130,3 +131,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#
