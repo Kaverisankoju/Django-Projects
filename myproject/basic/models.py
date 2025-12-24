@@ -39,3 +39,19 @@ class MovieTicketBooking(models.Model):
     dataandtime = models.DateTimeField(auto_now_add=True)
     trasactionid = models.UUIDField(default=uuid.uuid4,editable=False,unique=True)
     
+    
+class BookInfo(models.Model):
+    bookname = models.CharField(max_length=100)
+    authorName = models.CharField(max_length=100)
+    category = models.CharField(max_length=150)
+    price = models.DecimalField(max_digits=10,decimal_places=2)
+    rating = models.DecimalField(max_digits=5,decimal_places=1)
+    
+class CourseRegistration(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    course = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    registered = models.DateTimeField(auto_now_add=True)
+    
+    

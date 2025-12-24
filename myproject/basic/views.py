@@ -1,9 +1,10 @@
+from decimal import Decimal
 from django.shortcuts import render
 from django.http import HttpResponse,JsonResponse
 import math
 import json
 from django.views.decorators.csrf import csrf_exempt
-from basic.models import MovieTicketBooking, OrderDetails, userProfile,Employee
+from basic.models import BookInfo, CourseRegistration, MovieTicketBooking, OrderDetails, ProductDetails, userProfile,Employee
 from django.db.utils import IntegrityError
 
 
@@ -151,6 +152,7 @@ def createProductDetails(request):
 
     finally:
         print("DONE")
+ 
         
 def carPrices(request):
     qp = int(request.GET.get("price",100000))
@@ -164,6 +166,8 @@ def carPrices(request):
         msg ="nice"
     return HttpResponse(msg)
 
+
+# POST METHOD
 @csrf_exempt
 def orderPlacing(request):
     try:
@@ -172,12 +176,12 @@ def orderPlacing(request):
             order = OrderDetails.objects.create(
                 orderid = data["order_id"],
                 useremail = data["email"],
-                amount = data["amount"],
+                amount = Decimal(str(data["amount"])),
                 status = data["status"],
                 mode = data["mode"]
             )
             print(order.transaction_id)
-            x = order.transaction_id
+            x = str(order.transaction_id)
             return JsonResponse({
                 "status":"success",
                 "message":"payment details updated successfully",
@@ -188,7 +192,9 @@ def orderPlacing(request):
     except Exception as e:
         print(e)
         return JsonResponse({"error":"something went wrong"},status = 500)
-    
+ 
+ 
+   
 @csrf_exempt
 def movieTickets(request):
     try:
@@ -212,8 +218,104 @@ def movieTickets(request):
     except Exception as e:
         print(e)
         return JsonResponse({"error":"check the details once"},status = 500)
-                
-                
+  
+  
+#GET METHOD  
+@csrf_exempt
+def getOrders(request):
+    try:
+        if request.method == 'GET':
+            result = list(OrderDetails.objects.values())
+            if len(result) == 0:
+                msg = "No records found"
+            else:
+                msg = "Data retriving is successfully"
+            return JsonResponse({"status":"success","message":msg,"data":result,"lenght of data":len(result)})
+        return JsonResponse({"message":"use only get method"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error":"something went wrong"})                
+   
+
+#  PATH PARAMS
+student_info = [{"id":1,"name":"kaveri"},{"id":2,"name":"Adarsh"},{"id":3,"name":"Riveka"}]
+def getStudentById(request,id):
+    filteredStudent = []
+    for student in student_info:
+        if id == student["id"]:
+            filteredStudent.append(student)
+    return JsonResponse({"data":filteredStudent})
+
+
+
+@csrf_exempt
+def postBookDetails(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            bookdetails = BookInfo.objects.create(
+               bookname = data["book_name"],
+               authorName = data["author"],
+               category = data["category"],
+               price = str(data["price"]),
+               rating = str(data["rating"])  
+            )
+            return JsonResponse({"status":"success","message":"data retrived successfully","data":data})
+        return JsonResponse({"message":"check the details once"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error":str(e)})
+    
+    
+def getbookInfo(request):
+    try:
+        if request.method == 'GET':
+            result = list(BookInfo.objects.values())
+            if len(result) == 0:
+                msg = "No records found"
+            else:
+                msg = "Data retriving is successfully"
+            return JsonResponse({"status":"success","message":msg,"data":result,"length of data":len(result)})
+        return JsonResponse({"message":"use only get method"})  
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error":"something went wrong"}) 
+   
+@csrf_exempt 
+def  courseRegister(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            register = CourseRegistration.objects.create(
+                name = data["name"],
+                email = data["email"],
+                course = data["course"],
+                phone = data["phone"]
+            )
+            return JsonResponse({"status":"success","message":"Registration successful"},status = 201)
+        return JsonResponse({"message":"check the details once"},status = 400)
+    except Exception as e:
+        print(str(e))
+        return JsonResponse({"error":"something went wrong"},status = 500)  
+    
+    
+def getRegisterDetails(request):
+    try:
+        if request.method == 'GET':
+            result =  list(CourseRegistration.objects.values())   
+            if len(result) == 0:
+                msg = "No records found"
+            else:
+                msg = "Data retriving is successfully"
+            return JsonResponse({"status":"success","message":msg,"data":result},status = 201)
+        return JsonResponse({"message":"use only get method"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error":"something went wrong"})
+    
+    
+            
+
                 
                 
             
