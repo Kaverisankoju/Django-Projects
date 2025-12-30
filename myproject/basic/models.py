@@ -34,10 +34,13 @@ class OrderDetails(models.Model):
     
 class MovieTicketBooking(models.Model):
     moviename = models.CharField(max_length=150)
+    genres = models.CharField(max_length=100,default="Action")
     showtime = models.DecimalField(max_digits=10,decimal_places=2)
-    screename = models.CharField(max_length=150)
+    screenname = models.CharField(max_length=150)
     dataandtime = models.DateTimeField(auto_now_add=True)
     trasactionid = models.UUIDField(default=uuid.uuid4,editable=False,unique=True)
+    genres = models.CharField(max_length=100,default="Action")
+    
     
     
 class BookInfo(models.Model):

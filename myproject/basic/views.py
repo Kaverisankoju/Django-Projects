@@ -119,6 +119,7 @@ def createProductDetails(request):
                 prod_name=data.get("name"),
                 prod_price=data.get("price"),
                 prod_quantity=data.get("quantity")
+                
             )
 
             return JsonResponse({
@@ -194,7 +195,7 @@ def orderPlacing(request):
         return JsonResponse({"error":"something went wrong"},status = 500)
  
  
-   
+# post the data into the database
 @csrf_exempt
 def movieTickets(request):
     try:
@@ -203,7 +204,8 @@ def movieTickets(request):
             ticket = MovieTicketBooking.objects.create(
                 moviename = data["movie_name"],
                 showtime = data["show_time"],
-                screename = data["screen_name"]
+                screename = data["screen_name"],
+                genres = data["genres_type"]
             )
             print(ticket.trasactionid)
             x = str(ticket.trasactionid)
@@ -217,7 +219,76 @@ def movieTickets(request):
             
     except Exception as e:
         print(e)
-        return JsonResponse({"error":"check the details once"},status = 500)
+        return JsonResponse({"error":str(e)},status = 500)
+    
+
+
+# getting the data
+def getMovieDetails(request):
+    try:
+        if request.method == 'GET':
+            result = list(MovieTicketBooking.objects.values())
+            if len(result) == 0:
+                msg = "no records found"
+            else:
+                msg = "records fetched successufully"
+            return JsonResponse({"status":"success","message":msg,"data":result,"no.of record":len(result)},status = 201)
+        return JsonResponse({"status":"pending","message":"only get method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","message":"something went wrong"},status = 500)  
+    
+    
+# filter the data according to the condition by path param
+def getMovieByGenres(request,genres_val):
+    try:
+        if request.method == 'GET':
+            data = MovieTicketBooking.objects.filter(genres=genres_val).values()
+            filter_data = list(data)
+            if not filter_data:
+                msg = "no records found"
+            else:
+                msg = "records fetched successfully"
+            return JsonResponse({"status":"success","msg":msg,"data":filter_data,"no. of records":len(filter_data)})  
+        return JsonResponse({"message":"only get method is used"})
+    except Exception as e:
+        return JsonResponse({"status":"failure","message":str(e)})
+    
+    
+def getMovieByScreenname(request,screen_name):
+    try:
+        if request.method == 'GET':
+            data = MovieTicketBooking.objects.filter(screenname=screen_name).values()
+            final_result = list(data)
+            if len(final_result) == 0:
+                msg = "no records found"
+            else:
+                msg = "record fetched successfully"
+            return JsonResponse({"status":"success","data":final_result,"msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only get method allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"error","msg":"something went wrong"},status = 500)
+  
+  
+  
+def getMovieByMultipleScreens(request,first,second):
+    try:
+        if request.method == 'GET':
+            data1 = MovieTicketBooking.objects.filter(screenname=first).values()
+            data2 = MovieTicketBooking.objects.filter(screenname=second).values()
+            first_data = list(data1)
+            second_data = list(data2)
+            if len(first_data) == 0:
+                msg = "no records found"
+            else:
+                msg = "record fetched successfully"
+            if len(second_data) == 0:
+                msg = "no records found"
+            else:
+                msg = "record fetched successfully"
+            return JsonResponse({"status":"success",first:first_data,second:second_data,"msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only get method allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"error","msg":"something went wrong"},status = 500)
   
   
 #GET METHOD  
@@ -314,10 +385,127 @@ def getRegisterDetails(request):
         return JsonResponse({"error":"something went wrong"})
     
     
+student_info1 = [{"id":1,"name":"kaveri","degree":"CSE"},{"id":2,"name":"Tom","degree":"EEE"},{"id":3,"name":"Gowthami","degree":"CIVIL"},{"id":4,"name":"Rammurthy","degree":"CSE"}]    
+def getStudentByDegree(request,deg):
+    try:
+        if request.method == 'GET':
             
+            DegreeBasedFilteration = [] 
+            for student in student_info1:
+                if deg.lower() == student["degree"].lower():
+                    DegreeBasedFilteration.append(student)
+            if len(DegreeBasedFilteration) == 0:
+                msg = "no records found"
+            else:
+                msg = "student record fetched successfully"
+            return JsonResponse({"status":"success","data":DegreeBasedFilteration,"msg":msg,"no. of recods":len(DegreeBasedFilteration)},status=200)
+        
+        return JsonResponse({"status":"failure","message":"only get method is allowed"},status = 400)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"message":"something went wrong"})
+        
 
+def getOrdersByStatus(request,status_param):
+    try:
+        if request.method == 'GET':
+            data = OrderDetails.objects.filter(status=status_param)
+            response = []
+            for obj in data:
+                response.append({"id":obj.orderid,"amount":obj.amount,"mode":obj.mode,"status":obj.status})
+            return JsonResponse({"status":"success","msg":"record fetched successfully","data":response},status = 200)
+        return JsonResponse({"status":"failure","msg":"only get method is allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"error","msg":str(e)},status = 500)
+    
+    
+@csrf_exempt
+def updateMovieScreen(request,screen_name):
+    try:
+        if request.method =='PUT':
+            input_data = json.loads(request.body)
+            new_screen = input_data["new_screen"]
+            update = MovieTicketBooking.objects.filter(screenname=screen_name).update(screenname=new_screen)
+            if update == 0:
+                msg = "no record found with reference of id"
+            else:
+                msg = "record is updated successfully"
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"msg":"only put method is allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong","error":str(e)},status = 500)
                 
-                
+#  UPDATING THE DATA  
+@csrf_exempt
+def updateUserById(request):
+    try:
+        if request.method == 'PUT':
+            input_data = json.loads(request.body)
+            ref_id = input_data["id"]
+            new_city = input_data["new_city"]
             
+            update = userProfile.objects.filter(id=ref_id).update(city=new_city)
+            
+            if update == 0:
+                msg = "no records founds with the existing id"
+            else:
+                msg = "record updated successufully"
+                
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only put method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong"},status = 500)
     
+
+@csrf_exempt
+def updateUserageById(request):
+    try:
+        if request.method == 'PUT':
+            input_data = json.loads(request.body)
+            ref_id = input_data["id"]
+            new_age = input_data["new_age"]
+            update = userProfile.objects.filter(id = ref_id).update(age = new_age)
+            if update == 0:
+                msg = "no records founds with the existing id"
+            else:
+                msg = "record updated successufully"
+                
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only put method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong"},status = 500)
     
+#UPDATE DATA BY PATH PARAM 
+@csrf_exempt
+def updataUserByStatus(request,ref_status):
+    try:
+        if request.method == 'PUT':
+            input_data = json.loads(request.body)
+            new_status = input_data["new_status"]
+            update = OrderDetails.objects.filter(status = ref_status).update(status = new_status)
+            if update == 0:
+                msg = "no records found"
+            else:
+                msg = "record updated successfully"
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only put method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"Something went wrong"},status = 500) 
+
+
+
+ 
+# DELET OPERATION 
+@csrf_exempt
+def deleteUserDataById(request,ref_id):
+    try:
+        if request.method == 'DELETE':
+            delete_data = userProfile.objects.filter(id = ref_id).delete()
+            if delete_data[0] == 0:
+                msg = "no records found with that reference id"
+            else:
+                msg = "record deleted successfully"
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only delete method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong"},status = 500)

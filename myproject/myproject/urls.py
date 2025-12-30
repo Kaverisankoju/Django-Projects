@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin # type: ignore
 from django.urls import path # type: ignore
 from basic.views import home,about,navbar,contact,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity,pagination,createData,createProduct,createEmployee,createProductDetails,carPrices,orderPlacing
-from basic.views import movieTickets,getOrders,getStudentById,postBookDetails,getbookInfo,courseRegister,getRegisterDetails
+from basic.views import updataUserByStatus,deleteUserDataById,updateUserageById,updateUserById,updateMovieScreen,getMovieByMultipleScreens,getMovieByScreenname,getMovieByGenres,getMovieDetails,movieTickets,getOrders,getStudentById,postBookDetails,getbookInfo,courseRegister,getRegisterDetails,getStudentByDegree,getOrdersByStatus
 
 
 urlpatterns = [
@@ -41,10 +41,21 @@ urlpatterns = [
     path('prices/',carPrices),
     path('order/',orderPlacing),
     path('ticket/',movieTickets),
+    path('getmovie/',getMovieDetails),
+    path('movieByGenres/<str:genres_val>', getMovieByGenres),
+    path('getByScreenname/<str:screen_name>',getMovieByScreenname),
+    path('getBymultipleScreens/<str:first>/<str:second>',getMovieByMultipleScreens),
     path('orderDetails/',getOrders),
     path('studentData/<int:id>',getStudentById),
     path('bookinfo/',postBookDetails),
     path('getbookinfo/',getbookInfo),
     path('courseReg/',courseRegister),
-    path('getReg/',getRegisterDetails)
+    path('getReg/',getRegisterDetails),
+    path('getStudentsByDegree/<str:deg>',getStudentByDegree),
+    path('orderBystatus/<str:status_param>',getOrdersByStatus),
+    path('updateScreen/<str:screen_name>/',updateMovieScreen),
+    path('updateCity/',updateUserById),
+    path('updateAge/',updateUserageById),
+    path('deleteUser/<int:ref_id>',deleteUserDataById),
+    path('updateStatus/<str:ref_status>/',updataUserByStatus)
 ]
