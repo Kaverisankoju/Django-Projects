@@ -57,4 +57,10 @@ class CourseRegistration(models.Model):
     phone = models.CharField(max_length=15)
     registered = models.DateTimeField(auto_now_add=True)
     
-    
+  
+class BookDetails(models.Model):
+    id = models.IntegerField(primary_key=True)
+    bookname = models.CharField(max_length=100)
+    bookprice = models.IntegerField()
+    author = models.CharField(max_length=100)
+    book_type = models.CharField(max_length=100)  

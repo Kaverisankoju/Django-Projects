@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin # type: ignore
 from django.urls import path # type: ignore
 from basic.views import home,about,navbar,contact,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity,pagination,createData,createProduct,createEmployee,createProductDetails,carPrices,orderPlacing
-from basic.views import updataUserByStatus,deleteUserDataById,updateUserageById,updateUserById,updateMovieScreen,getMovieByMultipleScreens,getMovieByScreenname,getMovieByGenres,getMovieDetails,movieTickets,getOrders,getStudentById,postBookDetails,getbookInfo,courseRegister,getRegisterDetails,getStudentByDegree,getOrdersByStatus
+from basic.views import deleteBookDetails,updateBookDetails,getBookDetails,postBookDetails,updataUserByStatus,deleteUserDataById,updateUserageById,updateUserById,updateMovieScreen,getMovieByMultipleScreens,getMovieByScreenname,getMovieByGenres,getMovieDetails,movieTickets,getOrders,getStudentById,postBookDetails,getbookInfo,courseRegister,getRegisterDetails,getStudentByDegree,getOrdersByStatus
 
 
 urlpatterns = [
@@ -57,5 +57,9 @@ urlpatterns = [
     path('updateCity/',updateUserById),
     path('updateAge/',updateUserageById),
     path('deleteUser/<int:ref_id>',deleteUserDataById),
-    path('updateStatus/<str:ref_status>/',updataUserByStatus)
+    path('updateStatus/<str:ref_status>/',updataUserByStatus),
+    path('bookDetails/',postBookDetails),
+    path('getDetails/',getBookDetails),
+    path('updatePrice/<int:ref_id>/',updateBookDetails),
+    path('deleteBookDetails/<int:ref_id>/',deleteBookDetails)
 ]

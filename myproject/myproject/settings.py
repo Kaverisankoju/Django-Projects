@@ -48,6 +48,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'basic.middleware.middleware1',
+    'basic.middleware.middleware2',
+    'basic.middleware.middleware3',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -79,12 +82,12 @@ DATABASES = {
         'NAME': '56r',
         'USER':'root',
         'PASSWORD':"Kaveri@123",
-        'Host': '127.0.0.1',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS':{
             # 'autocommit':True
             "charset":"utf8mb4",
-            "init_command":"SET sql_mode='STRICT_TRANS_TABLES'"
+            'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"
         }
     }
 }

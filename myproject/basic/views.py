@@ -4,7 +4,7 @@ from django.http import HttpResponse,JsonResponse
 import math
 import json
 from django.views.decorators.csrf import csrf_exempt
-from basic.models import BookInfo, CourseRegistration, MovieTicketBooking, OrderDetails, ProductDetails, userProfile,Employee
+from basic.models import BookDetails, BookInfo, CourseRegistration, MovieTicketBooking, OrderDetails, ProductDetails, userProfile,Employee
 from django.db.utils import IntegrityError
 
 
@@ -509,3 +509,69 @@ def deleteUserDataById(request,ref_id):
         return JsonResponse({"status":"pending","msg":"only delete method is used"},status = 400)
     except Exception as e:
         return JsonResponse({"status":"failure","msg":"something went wrong"},status = 500)
+    
+    
+# POST
+@csrf_exempt
+def postBookDetails(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            book = BookDetails.objects.create(
+                id = data["id"],
+                bookname = data["book_name"],
+                bookprice = data["price"],
+                author = data["author_name"],
+                book_type = data["type"]
+            )
+            return JsonResponse({"status":"success","message":"record inserted successfully"},status = 200)
+        return JsonResponse({"status":"pending","message":"only post method is allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","error":f"something went wronng {str(e)}"})
+  
+#   GET
+@csrf_exempt  
+def getBookDetails(request):
+    try:
+        if request.method == 'GET':
+            result = list(BookDetails.objects.values())
+            if len(result) == 0:
+                msg = "no records found"
+            else:
+                msg = "data retrived successfully"
+            return JsonResponse({"status":"success","message":msg,"data":result},status = 200)
+        return JsonResponse({"status":"pending","message":"only get method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong","error":str(e)},status = 500)
+ 
+ #PUT 
+@csrf_exempt
+def updateBookDetails(request,ref_id):
+    try:
+        if request.method == 'PUT':
+            input_data = json.loads(request.body)
+            new_price = input_data["new_price"]
+            update = BookDetails.objects.filter(id = ref_id).update(bookprice = new_price)
+            if update == 0:
+                msg = 'no records found with that reference id'
+            else:
+                msg = 'record updated successfully'
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only put method allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong","error":str(e)},status = 500)
+    
+    
+@csrf_exempt
+def deleteBookDetails(request,ref_id):
+    try:
+        if request.method == 'DELETE':
+            delete_data = BookDetails.objects.filter(id=ref_id).delete()
+            if delete_data[0] == 0:
+                msg = "no records found"
+            else:
+                msg = "record deleted successfully"
+            return JsonResponse({"status":"success","msg":msg},status = 200)
+        return JsonResponse({"status":"pending","msg":"only delete method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"womething went wrong"},status = 500)
