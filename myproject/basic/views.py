@@ -1,11 +1,14 @@
 from decimal import Decimal
+import re
 from django.shortcuts import render
 from django.http import HttpResponse,JsonResponse
 import math
 import json
 from django.views.decorators.csrf import csrf_exempt
-from basic.models import BookDetails, BookInfo, CourseRegistration, MovieTicketBooking, OrderDetails, ProductDetails, userProfile,Employee
+from basic.models import BookDetails, BookInfo, CourseRegistration, CustomerProfile, MovieTicketBooking, OrderDetails, ProductDetails, Student, User,userProfile,Employee
 from django.db.utils import IntegrityError
+from django.db.models import Avg
+
 
 
 
@@ -575,3 +578,278 @@ def deleteBookDetails(request,ref_id):
         return JsonResponse({"status":"pending","msg":"only delete method is used"},status = 400)
     except Exception as e:
         return JsonResponse({"status":"failure","msg":"womething went wrong"},status = 500)
+    
+    
+@csrf_exempt  
+def job1(request):
+    
+    try:
+        if request.method == 'POST':
+            return JsonResponse({"status":"success","msg":"JOB APPLIED SUCCESSFULLY"},status = 200)
+        return JsonResponse({"status":"pending","msg":"only post method is used"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong"},status = 500)
+
+@csrf_exempt
+def engineeringSeat(request):
+    try:
+        if request.method == 'POST':
+            return JsonResponse({"status":"success","msg":"ENGINEERING SEAT CONFIRMED"},status = 200)
+        return JsonResponse({"status":"pending","msg":"only post method is allowed"})
+    except Exception as e:
+        return JsonResponse({"status":"failure","msg":"something went wrong"})
+    
+    
+    
+@csrf_exempt
+def signup(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        
+        User.objects.create(
+            username = data['username'],
+            email = data['email'],
+            password = data['password']
+        )
+        
+        return JsonResponse({"status":"success","message":"signup successful"})
+    return JsonResponse({"status":"failure","error":"Invalid request"},status = 400)
+
+
+
+
+EMAIL_REGEX = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+@csrf_exempt
+def add_User(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            name = data.get("name")
+            email = data.get("email")
+            age = data.get("age")
+            city = data.get("city")
+            
+            if not name or not email or not age or not city:
+                return JsonResponse({"status":"failure","message":"All fields are required"},status = 400)
+            if not re.match(EMAIL_REGEX,email):
+                return JsonResponse({"status":"failure","message":"Invalid email Format"},status = 400)
+            if int(age) < 18:
+                return JsonResponse({"status":"failure","message":"Age must be 18 or above"},status = 400)
+            
+            CustomerProfile.objects.create(
+                name = name,
+                email = email,
+                age = age,
+                city = city
+            )
+            
+            return JsonResponse({"status":"success","message":"User Added Successfully"},status = 200)
+        return JsonResponse({"status":"pending","message":"Only Post method is allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"Failure","error":f"Something went wrong:{str(e)}"},status = 500)
+    
+    
+
+def get_all_users(request):
+    try:
+        if request.method == 'GET':
+            users_qs = CustomerProfile.objects.all().order_by('-created_at')
+            
+            users_list = []
+            
+            for user in users_qs:
+                users_list.append({
+                    "id":user.id,
+                    "name":user.name,
+                    "email":user.email,
+                    "age":user.age,
+                    "city":user.city,
+                    "created_at":user.created_at
+                })
+                
+                
+            response_data = {
+                "total_count":len(users_list),
+                "users":users_list
+            }
+            
+            return JsonResponse({"status":"success","data":response_data},status = 200)
+        return JsonResponse({"status":"Failure","message":"Only GET method is allowed"},status = 400)
+    except Exception as e:
+        return JsonResponse({"status":"Failure","message":"Something went Wrong"},status = 500)
+
+@csrf_exempt      
+def filter_users(request):
+    try:
+        if request.method == 'GET':
+            users = CustomerProfile.objects.all()
+            
+            city = request.GET.get('city')
+            min_age = request.GET.get('min_age')
+            
+            if city:
+                users = users.filter(city__iexact = city) 
+            if min_age:
+                users = users.filter(age__gte = min_age)
+                
+            users = users.order_by('-created_at')
+            
+            users_list = []
+            for user in users:
+                users_list.append({
+                    "id":user.id,
+                    "name":user.name,
+                    "email":user.email,
+                    "age":user.age,
+                    "city":user.city,
+                    "created_at":user.created_at
+                })
+                
+            return JsonResponse({"status":"success","total_count":len(users_list),"data":users_list,},status = 200)
+        return JsonResponse({"status":"Pending","message":"Only GET method is used"})
+    except Exception as e:
+        print(str(e))
+        return JsonResponse({"status":"Failure","message":"Something Went Wrong"},status = 500)
+    
+ 
+@csrf_exempt   
+def add_student(request):
+    try:
+        if request.method != 'POST':
+            return JsonResponse({"status":"failure","message":"Only POST method is allowed"},status = 405)
+        data = json.loads(request.body)
+        
+        name = data.get("name")
+        email = data.get("email")
+        python_marks = data.get("python_marks")
+        django_marks = data.get("django_marks")
+        sql_marks = data.get("sql_marks")
+        
+        if not name or not email or python_marks is None or django_marks is None or sql_marks is None:
+            return JsonResponse({"status":"failure","message":"All fields are required"},status = 400)
+        python_marks = int(python_marks)
+        django_marks = int(django_marks)
+        sql_marks = int(sql_marks)
+        
+        total = python_marks + django_marks + sql_marks
+        
+        percentage = total / 3
+        
+        if percentage >= 75:
+            grade = 'A'
+        elif percentage >= 60:
+            grade = 'B'
+        elif percentage >= 40:
+            grade = 'C'
+        else:
+            grade = 'Fail'
+            
+        Student.objects.create(
+            name = name,
+            email = email,
+            python_marks = python_marks,
+            django_marks = django_marks,
+            sql_marks = sql_marks,
+            total = total,
+            percentage = percentage,
+            grade = grade
+        )
+        
+        return JsonResponse({
+            "status":"success",
+            "message":"Student added successfully",
+            "total":total,
+            "percentage":percentage,
+            "grade":grade
+            
+        },status = 201)
+    except Exception as e:
+        return JsonResponse({"status":"Failure","message":"Something went wrong"},status = 500)
+    
+ 
+# Students with Grade A   
+def students_with_grade_a(request):
+    if request.method == 'GET':
+        students  = Student.objects.filter(grade = 'A')
+        data = []
+        for s in students:
+            data.append({
+                "name":s.name,
+                "email":s.email,
+                "percentage":s.percentage,
+                "grade":s.grade
+            })
+        return JsonResponse({"status":"sucess","total_count":len(students),"students":data},status = 200)
+    return JsonResponse({"status":"Failure","message":"Only GET method allowed"},status = 405)
+
+
+    
+# Top 3 Students (Highest Percentage)
+def top_3_students(request):
+    if request.method == 'GET':
+        students = Student.objects.order_by('-percentage')[:3]
+        
+        data = []
+        for s in students:
+            data.append({
+                "name":s.name,
+                "email":s.email,
+                "percentage":s.percentage,
+                "grade":s.grade
+            })
+            
+        return JsonResponse({"status":"success","top_students":data},status = 200)
+    return JsonResponse({"status":"Failure","message":"Only GET method allowed"},status = 405)
+    
+ 
+ 
+# Average Percentage of All Students
+def average_percentage(request):
+    if request.method == 'GET':
+        avg_percentage = Student.objects.aggregate(
+            average = Avg('percentage')
+        )['average']
+        
+        return JsonResponse({"status":"success","average_percentage":avg_percentage},status = 200)
+    return JsonResponse({"status":"Failur","message":'Only GET method is allowed'},status = 405)
+
+
+def pass_vs_fail(request):
+    if request.method == 'GET':
+        pass_count = Student.objects.exclude(grade = 'Fail').count()
+        fail_count = Student.objects.filter(grade = 'Fail').count()
+        
+        return JsonResponse({"status":"success","pass":pass_count,"Fail":fail_count},status = 200)
+    return JsonResponse({"status":"Failure","message":"Only GET method is allowed"},status = 405)     
+
+
+def soft_delete_student(request,student_id):
+    try:
+        if request.method == 'DELETE':
+            student = Student.objects.get(id = student_id)
+            student.is_active = False
+            student.save()
+            
+            return JsonResponse({"status":"success","message":"Student soft Deleted"},status = 200)
+        
+
+        return JsonResponse({"status":"Failure","message":"Only DELETE method is allowed"},ststaus = 405)
+    except Exception as e:
+        return JsonResponse({"status":"Failure","message":"Student not Found"}, status = 404)
+    
+    
+    
+def students_with_grade_a(request):
+    if request.method == 'GET':
+        students = Student.objects.filter(grade = 'A',is_active = True)
+        
+        data = []
+        for s in students:
+            data.append({
+                "name":s.name,
+                "email":s.email,
+                "percentage":s.percentage,
+                "grade":s.grade
+            })
+        return JsonResponse({"status":"success","tota;_count":len(data),"students":data},status = 200)
+    return JsonResponse({"status":"Failure","message":"Only GET method is allowed"},status = 405)

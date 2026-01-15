@@ -44,13 +44,23 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'basic.middleware.middleware1',
-    'basic.middleware.middleware2',
-    'basic.middleware.middleware3',
+    # 'basic.middleware.middleware1',
+    # 'basic.middleware.middleware2',
+    # 'basic.middleware.middleware3',
+    # 'basic.middleware.sccMiddleware',
+    # 'basic.middleware.medicalStatusMiddleware',
+    # 'basic.middleware.ageValidationMiddleware',
+    # 'basic.middleware.interValidation',
+    # 'basic.middleware.eamcetValidation',
+    'basic.middleware.UsernameValidationMiddleware',
+    'basic.middleware.EmailValidationMiddleware',
+    'basic.middleware.PasswordValidationMiddleware',
+    
+
 ]
 
 ROOT_URLCONF = 'myproject.urls'

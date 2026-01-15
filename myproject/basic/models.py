@@ -64,3 +64,33 @@ class BookDetails(models.Model):
     bookprice = models.IntegerField()
     author = models.CharField(max_length=100)
     book_type = models.CharField(max_length=100)  
+    
+    
+class User(models.Model):
+    username = models.CharField(max_length=100,unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=200)
+    
+    
+class CustomerProfile(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    age  = models.IntegerField()
+    city = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    
+class Student(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+
+    python_marks = models.IntegerField()
+    django_marks = models.IntegerField()
+    sql_marks = models.IntegerField()
+
+    total = models.IntegerField()
+    percentage = models.FloatField()
+    grade = models.CharField(max_length=10)
+    
+    
+    is_active = models.BooleanField(default=True)

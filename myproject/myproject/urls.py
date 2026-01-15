@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin # type: ignore
 from django.urls import path # type: ignore
-from basic.views import home,about,navbar,contact,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity,pagination,createData,createProduct,createEmployee,createProductDetails,carPrices,orderPlacing
+from basic.views import add_User, add_student, average_percentage, engineeringSeat, filter_users, get_all_users, home,about, job1,navbar,contact, pass_vs_fail,sample,sample1,sample2,sample3,product,filteringData,filterStudentsByCity,pagination,createData,createProduct,createEmployee,createProductDetails,carPrices,orderPlacing, signup, soft_delete_student, students_with_grade_a, top_3_students
 from basic.views import deleteBookDetails,updateBookDetails,getBookDetails,postBookDetails,updataUserByStatus,deleteUserDataById,updateUserageById,updateUserById,updateMovieScreen,getMovieByMultipleScreens,getMovieByScreenname,getMovieByGenres,getMovieDetails,movieTickets,getOrders,getStudentById,postBookDetails,getbookInfo,courseRegister,getRegisterDetails,getStudentByDegree,getOrdersByStatus
 
 
@@ -61,5 +61,17 @@ urlpatterns = [
     path('bookDetails/',postBookDetails),
     path('getDetails/',getBookDetails),
     path('updatePrice/<int:ref_id>/',updateBookDetails),
-    path('deleteBookDetails/<int:ref_id>/',deleteBookDetails)
+    path('deleteBookDetails/<int:ref_id>/',deleteBookDetails),
+    path('job1/',job1),
+    path('engineeringSeat/',engineeringSeat),
+    path('signup/',signup),
+    path('add_user/',add_User),
+    path('get_users/',get_all_users),
+    path('users/filter/',filter_users),
+    path('add-student/',add_student),
+    path('grade-a/',students_with_grade_a),
+    path('top-3/',top_3_students),
+    path('average/',average_percentage),
+    path('pass-fail/',pass_vs_fail),
+    path('delete/<int:student_id>/',soft_delete_student)
 ]
