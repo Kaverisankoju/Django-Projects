@@ -1,0 +1,63 @@
+
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="section-title text-center mb-5">
+Available Jobs
+</h1>
+
+<div class="row g-4">
+
+{% for job in jobs %}
+
+<div class="col-md-4">
+
+<div class="card h-100 p-3">
+
+<img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop"
+     class="company-image rounded">
+
+<div class="card-body">
+
+<h3>{{ job.title }}</h3>
+
+<p>
+<strong>Company:</strong>
+{{ job.company }}
+</p>
+
+<p>
+<strong>Location:</strong>
+{{ job.location }}
+</p>
+
+<p>
+<strong>Salary:</strong>
+{{ job.salary }}
+</p>
+
+<p>
+{{ job.description|truncatewords:20 }}
+</p>
+
+<a href="/apply/{{ job.id }}/"
+   class="btn btn-primary w-100">
+
+Apply Now
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

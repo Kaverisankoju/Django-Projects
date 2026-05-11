@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="section-title text-center">
+
+My Applications
+
+</h1>
+
+<div class="row g-4">
+
+{% for app in applications %}
+
+<div class="col-md-4">
+
+<div class="card p-3">
+
+<img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop"
+     class="company-image rounded">
+
+<div class="card-body">
+
+<h3>
+
+{{ app.job.title }}
+
+</h3>
+
+<p>
+
+<strong>Company:</strong>
+
+{{ app.job.company }}
+
+</p>
+
+<p>
+
+<strong>Location:</strong>
+
+{{ app.job.location }}
+
+</p>
+
+<div class="d-flex gap-2">
+
+<a href="{{ app.resume.url }}"
+   class="btn btn-success w-50">
+
+View Resume
+
+</a>
+
+<a href="/delete-application/{{ app.id }}/"
+   class="btn btn-danger w-50">
+
+Withdraw
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<h3 class="text-center">
+
+No applications yet.
+
+</h3>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
